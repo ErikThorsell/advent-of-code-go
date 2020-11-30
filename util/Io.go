@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -66,4 +68,18 @@ func FetchInputForDay(year string, day string) string {
 		log.Fatal(err)
 	}
 	return string(data)
+}
+
+// ParseInputToListOfInts takes a string and a sep as input.
+// Returns a correctly parsed string of ints.
+func ParseInputToListOfInts(input string, sep rune) []int {
+
+	listOfStrings := strings.Split(input, string([]rune{sep}))
+
+	var listOfInts []int
+	for _, x := range listOfStrings {
+		v, _ := strconv.Atoi(x)
+		listOfInts = append(listOfInts, v)
+	}
+	return listOfInts
 }

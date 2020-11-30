@@ -2,37 +2,53 @@ package main
 
 import (
 	"fmt"
-	"strconv"
-	"strings"
 
-    "github.com/ErikThorsell/advent-of-code-go/util"
+	"github.com/ErikThorsell/advent-of-code-go/util"
 )
 
 func part1(integers []int) int {
 
-	integers[1] = 12
-	integers[2] = 2
+	program := make([]int, len(integers))
+	copy(program, integers)
 
-	integers = util.RunProgram(integers)
+	program[1] = 12
+	program[2] = 2
 
-	return integers[0]
+	program = util.RunProgram(program)
+
+	return program[0]
 
 }
 
-func part2(modules []int) int {
-	return 0
+func part2(integers []int) int {
+
+	var noun int
+	var verb int
+
+	program := make([]int, len(integers))
+
+	for noun = 0; noun < 100; noun++ {
+		for verb = 0; verb < 100; verb++ {
+
+			copy(program, integers)
+
+			program[1] = noun
+			program[2] = verb
+
+			program = util.RunProgram(program)
+
+			if program[0] == 19690720 {
+				return 100*noun + verb
+			}
+		}
+	}
+	return -1
 }
 
 func main() {
 
 	input := util.FetchInputForDay("2019", "2")
-	rawData := strings.Split(input, ",")
-
-	var intData []int
-	for _, x := range rawData {
-		v, _ := strconv.Atoi(x)
-		intData = append(intData, v)
-	}
+	intData := util.ParseInputToListOfInts(input, ',')
 
 	ans1 := part1(intData)
 	fmt.Println("Answer for first question: ", ans1)
