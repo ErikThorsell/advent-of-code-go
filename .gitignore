@@ -1,3 +1,6 @@
+# AoC Ignores
+cookie
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
