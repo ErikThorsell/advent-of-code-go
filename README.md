@@ -1,4 +1,4 @@
-advent-of-code-go
+Advent of Code - using Go
 ===
 
 My attempt at solving Advent of Code Challenges using Go.
