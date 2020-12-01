@@ -60,6 +60,10 @@ func FetchInputForDay(year string, day string) string {
 		log.Fatal("HTTP Request failed: ", err)
 	}
 
+	if !(resp.StatusCode >= 200 && resp.StatusCode <= 299) {
+		log.Fatal("HTTP Error: ", resp.StatusCode)
+	}
+
 	data, _ := ioutil.ReadAll(resp.Body)
 
 	// Write file to avoid re-fetching
