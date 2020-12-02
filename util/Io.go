@@ -64,7 +64,9 @@ func FetchInputForDay(year string, day string) string {
 		log.Fatal("HTTP Error: ", resp.StatusCode)
 	}
 
+	// The 'ol []byte to string (for trimming) to [byte]-aroo
 	data, _ := ioutil.ReadAll(resp.Body)
+	data = []byte(strings.TrimSpace(string(data)))
 
 	// Write file to avoid re-fetching
 	err = ioutil.WriteFile(possibleFile, data, 0644)
@@ -88,11 +90,8 @@ func ParseInputToListOfInts(input string, sep rune) []int {
 	return listOfInts
 }
 
-func ParsePassword(input string) []string {
-
+// Parsing function for getting the raw input separated by \n
+func ParseInputToListOfStrings(input string) []string {
 	listOfStrings := strings.Split(input, "\n")
-
-	fmt.Println("Length of input: ", len(listOfStrings))
-
 	return listOfStrings
 }

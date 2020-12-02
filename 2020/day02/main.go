@@ -87,7 +87,7 @@ func part2(input []string) int {
 func main() {
 
 	rawInput := util.FetchInputForDay("2020", "2")
-	parsedInput := util.ParsePassword(rawInput)
+	parsedInput := util.ParseInputToListOfStrings(rawInput)
 
 	ans1 := part1(parsedInput)
 	fmt.Println("Answer for first question: ", ans1)
