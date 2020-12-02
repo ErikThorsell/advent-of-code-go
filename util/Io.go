@@ -87,3 +87,12 @@ func ParseInputToListOfInts(input string, sep rune) []int {
 	}
 	return listOfInts
 }
+
+func ParsePassword(input string) []string {
+
+	listOfStrings := strings.Split(input, "\n")
+
+	fmt.Println("Length of input: ", len(listOfStrings))
+
+	return listOfStrings
+}
