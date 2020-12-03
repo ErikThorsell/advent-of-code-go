@@ -1,16 +1,34 @@
 package main
 
-import "testing"
+import (
+	"io/ioutil"
+	"testing"
 
-func TestMain(t *testing.T) {
+	"github.com/ErikThorsell/advent-of-code-go/util"
+)
 
-	inputs := []int{1, 2}
-	expectedOutputs := []int{0, 0}
+func Test1(t *testing.T) {
 
-	for i := 0; i < len(inputs); i++ {
-		actual := part1(inputs)
-		if expectedOutputs[i] != actual {
-			t.Errorf("Test failed, expected: '%d', got:  '%d'", expectedOutputs, actual)
-		}
+	exampleData, _ := ioutil.ReadFile("./example")
+	exampleResult := 0
+
+	parsedExampleData := util.ParseInputToListOfInts(string(exampleData), '\n')
+	actual := part1(parsedExampleData)
+
+	if exampleResult != actual {
+		t.Errorf("Test failed, expected: '%d', got:  '%d'", exampleResult, actual)
+	}
+}
+
+func Test2(t *testing.T) {
+
+	exampleData, _ := ioutil.ReadFile("./example")
+	exampleResult := 0
+
+	parsedExampleData := util.ParseInputToListOfInts(string(exampleData), '\n')
+	actual := part2(parsedExampleData)
+
+	if exampleResult != actual {
+		t.Errorf("Test failed, expected: '%d', got:  '%d'", exampleResult, actual)
 	}
 }
