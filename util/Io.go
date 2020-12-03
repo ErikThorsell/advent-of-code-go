@@ -90,8 +90,23 @@ func ParseInputToListOfInts(input string, sep rune) []int {
 	return listOfInts
 }
 
-// Parsing function for getting the raw input separated by \n
+// ParseInputToListOfStrings takes the raw input, split the input on \n,
+// and return a []string.
 func ParseInputToListOfStrings(input string) []string {
 	listOfStrings := strings.Split(input, "\n")
 	return listOfStrings
+}
+
+// ParseInputToListOfStrings takes the raw input, split the input on \n,
+// and return a [][]string.
+func ParseTreeInput(input string) ([][]string, int) {
+	listOfStrings := strings.Split(input, "\n")
+	numberOfRows := len(listOfStrings)
+
+	var doubleList [][]string
+	for _, row := range listOfStrings {
+		doubleList = append(doubleList, strings.Split(row, ""))
+	}
+
+	return doubleList, numberOfRows
 }
