@@ -97,8 +97,7 @@ func ParseInputToListOfStrings(input string) []string {
 	return listOfStrings
 }
 
-// ParseInputToListOfStrings takes the raw input, split the input on \n,
-// and return a [][]string.
+// ParseTreeInput is used to parse a string into its rows and their characters
 func ParseTreeInput(input string) ([][]string, int) {
 	listOfStrings := strings.Split(input, "\n")
 	numberOfRows := len(listOfStrings)
@@ -109,4 +108,18 @@ func ParseTreeInput(input string) ([][]string, int) {
 	}
 
 	return doubleList, numberOfRows
+}
+
+func stringInList(s string, list []string) bool {
+	for _, x := range list {
+		if s == x {
+			return true
+		}
+	}
+	return false
+}
+
+// ParsePassport considers a passport to be separated by a blank line
+func ParsePassport(input string) []string {
+	return strings.Split(input, "\n\n")
 }
