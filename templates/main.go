@@ -17,7 +17,7 @@ func part2(input []int) int {
 func main() {
 
 	rawInput := util.FetchInputForDay("2020", "0")
-	parsedInput := util.ParseInputToListOfInts(rawInput, '\n')
+	parsedInput := util.ParseInputBySepToInts(rawInput, '\n')
 
 	ans1 := part1(parsedInput)
 	fmt.Println("Answer for first question: ", ans1)

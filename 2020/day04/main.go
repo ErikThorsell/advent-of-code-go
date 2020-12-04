@@ -205,7 +205,7 @@ func part2(listOfPassports []string) int {
 func main() {
 
 	rawInput := util.FetchInputForDay("2020", "4")
-	parsedInput := util.ParsePassport(rawInput)
+	parsedInput := util.ParseInputByBlankLine(rawInput)
 
 	ans1 := part1(parsedInput)
 	fmt.Println("Answer for first question: ", ans1)

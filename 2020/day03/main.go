@@ -69,7 +69,7 @@ func part2(grid [][]string, rows int) int {
 func main() {
 
 	rawInput := util.FetchInputForDay("2020", "3")
-	parsedInput, numberOfRows := util.ParseTreeInput(rawInput)
+	parsedInput, numberOfRows := util.ParseInputByLineAndRune(rawInput)
 
 	ans1 := part1(parsedInput, numberOfRows)
 	fmt.Println("Answer for first question: ", ans1)

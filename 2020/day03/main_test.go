@@ -10,7 +10,7 @@ import (
 func TestPart1(t *testing.T) {
 
 	data, _ := ioutil.ReadFile("./example")
-	input, numberOfRows := util.ParseTreeInput(string(data))
+	input, numberOfRows := util.ParseInputByLineAndRune(string(data))
 
 	expectedOutput := 7
 
@@ -24,7 +24,7 @@ func TestPart1(t *testing.T) {
 func TestPart2(t *testing.T) {
 
 	data, _ := ioutil.ReadFile("./example")
-	input, numberOfRows := util.ParseTreeInput(string(data))
+	input, numberOfRows := util.ParseInputByLineAndRune(string(data))
 
 	expectedOutput := 336
 	actual := part2(input, numberOfRows)

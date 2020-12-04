@@ -76,9 +76,9 @@ func FetchInputForDay(year string, day string) string {
 	return string(data)
 }
 
-// ParseInputToListOfInts takes a string and a sep as input.
+// ParseInputBySepToInts takes a string and a sep as input.
 // Returns a correctly parsed string of ints.
-func ParseInputToListOfInts(input string, sep rune) []int {
+func ParseInputBySepToInts(input string, sep rune) []int {
 
 	listOfStrings := strings.Split(input, string([]rune{sep}))
 
@@ -90,15 +90,16 @@ func ParseInputToListOfInts(input string, sep rune) []int {
 	return listOfInts
 }
 
-// ParseInputToListOfStrings takes the raw input, split the input on \n,
+// ParseInputByLine takes the raw input, split the input on \n,
 // and return a []string.
-func ParseInputToListOfStrings(input string) []string {
+func ParseInputByLine(input string) []string {
 	listOfStrings := strings.Split(input, "\n")
 	return listOfStrings
 }
 
-// ParseTreeInput is used to parse a string into its rows and their characters
-func ParseTreeInput(input string) ([][]string, int) {
+// ParseInputByLineAndRune is used to parse a string first by row and then
+// split that line into individual runes.
+func ParseInputByLineAndRune(input string) ([][]string, int) {
 	listOfStrings := strings.Split(input, "\n")
 	numberOfRows := len(listOfStrings)
 
@@ -110,16 +111,16 @@ func ParseTreeInput(input string) ([][]string, int) {
 	return doubleList, numberOfRows
 }
 
-func stringInList(s string, list []string) bool {
-	for _, x := range list {
-		if s == x {
-			return true
-		}
-	}
-	return false
-}
-
-// ParsePassport considers a passport to be separated by a blank line
-func ParsePassport(input string) []string {
+// ParseInputByBlankLine returns a list of strings where each item
+// was originally separated by a blank line.
+//
+// Example:
+// foo bar, test -- words
+// still first item
+//
+// this will!!! be the second
+//
+// Third comes here :)
+func ParseInputByBlankLine(input string) []string {
 	return strings.Split(input, "\n\n")
 }
