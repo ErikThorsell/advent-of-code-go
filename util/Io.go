@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -32,13 +31,14 @@ func fileExists(path string) bool {
 		return false
 	}
 
-	fmt.Println("File exists: ", path)
+	fmt.Println("File:", path, "already exists. Using it.")
 	return true
 }
 
 // FetchInputForDay returns the data for the corresponding challenge
 func FetchInputForDay(year string, day string) string {
 
+	fmt.Println("🌟 Fetching today's input! 🌟")
 	possibleFile := fmt.Sprintf("%v/data/%v", year, day)
 	if fileExists(possibleFile) {
 		data, _ := ioutil.ReadFile(possibleFile)
@@ -73,7 +73,22 @@ func FetchInputForDay(year string, day string) string {
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println("Input retrieved, happy coding!")
 	return string(data)
+}
+
+// ParseInputByLineAndSep takes a string and a sep as input.
+// Returns a correctly parsed string of strings.
+func ParseInputByLineAndSep(input string, sep rune) [][]string {
+
+	listOfStrings := ParseInputByLine(input)
+
+	var listOfItems [][]string
+	for _, row := range listOfStrings {
+		listOfItems = append(listOfItems, strings.Split(row, string(sep)))
+	}
+
+	return listOfItems
 }
 
 // ParseInputBySepToInts takes a string and a sep as input.
@@ -84,7 +99,7 @@ func ParseInputBySepToInts(input string, sep rune) []int {
 
 	var listOfInts []int
 	for _, x := range listOfStrings {
-		v, _ := strconv.Atoi(x)
+		v := ToInt(x)
 		listOfInts = append(listOfInts, v)
 	}
 	return listOfInts
