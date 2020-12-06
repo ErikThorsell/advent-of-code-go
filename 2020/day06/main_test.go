@@ -10,9 +10,9 @@ import (
 func Test1(t *testing.T) {
 
 	exampleData, _ := ioutil.ReadFile("./example")
-	exampleResult := 0
+	exampleResult := 11
 
-	parsedExampleData := util.ParseInputByLineAndSep(string(exampleData), ',')
+	parsedExampleData := util.ParseInputByBlankLine(string(exampleData))
 	actual := part1(parsedExampleData)
 
 	if exampleResult != actual {
@@ -23,9 +23,9 @@ func Test1(t *testing.T) {
 func Test2(t *testing.T) {
 
 	exampleData, _ := ioutil.ReadFile("./example")
-	exampleResult := 0
+	exampleResult := 6
 
-	parsedExampleData := util.ParseInputByLineAndSep(string(exampleData), ',')
+	parsedExampleData := util.ParseInputByBlankLine(string(exampleData))
 	actual := part2(parsedExampleData)
 
 	if exampleResult != actual {

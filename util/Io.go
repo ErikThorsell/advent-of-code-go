@@ -139,3 +139,9 @@ func ParseInputByLineAndRune(input string) ([][]string, int) {
 func ParseInputByBlankLine(input string) []string {
 	return strings.Split(input, "\n\n")
 }
+
+// ParseNumberDashNumber takes: "number1-number2" and returns the numbers as ints
+func ParseNumberDashNumber(input string) (int, int) {
+	listOfStrings := strings.Split(input, "-")
+	return ToInt(listOfStrings[0]), ToInt(listOfStrings[1])
+}
