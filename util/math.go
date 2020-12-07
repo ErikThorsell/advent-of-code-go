@@ -32,3 +32,12 @@ func Abs(x int) int {
 	}
 	return x
 }
+
+// SumSlice sums all ints in a slice
+func SumSlice(ints []int) int {
+	sum := 0
+	for _, i := range ints {
+		sum += i
+	}
+	return sum
+}

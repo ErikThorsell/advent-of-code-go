@@ -128,14 +128,6 @@ func ParseInputByLineAndRune(input string) ([][]string, int) {
 
 // ParseInputByBlankLine returns a list of strings where each item
 // was originally separated by a blank line.
-//
-// Example:
-// foo bar, test -- words
-// still first item
-//
-// this will!!! be the second
-//
-// Third comes here :)
 func ParseInputByBlankLine(input string) []string {
 	return strings.Split(input, "\n\n")
 }

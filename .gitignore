@@ -1,6 +1,7 @@
 # AoC Ignores
 cookie
 main
+tmp/
 
 # Binaries for programs and plugins
 *.exe
