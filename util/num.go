@@ -9,3 +9,11 @@ func IntInSlice(a int, list []int) bool {
 	}
 	return false
 }
+
+func SliceFromSlice(s []int, is []int) []int {
+	newSlice := []int{}
+	for _, i := range is {
+		newSlice = append(newSlice, s[i])
+	}
+	return newSlice
+}
