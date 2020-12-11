@@ -8,83 +8,24 @@ import (
 	"github.com/ErikThorsell/advent-of-code-go/util"
 )
 
-func stepModel1(oldSeatGrid [][]string) [][]string {
+func runSimulation(grid [][]string, part int) [][]string {
 
-	newSeatGrid := util.CopyGrid(oldSeatGrid)
+	oldSeatGrid := util.CopyGrid(grid)
 
-	for i := 0; i < len(oldSeatGrid); i++ {
-		for j := 0; j < len(oldSeatGrid[i]); j++ {
-			newSeatGrid[i][j] = applyRulesPart1(oldSeatGrid, i, j)
-		}
-	}
-
-	return newSeatGrid
-
-}
-
-func applyRulesPart1(seatGrid [][]string, i int, j int) string {
-
-	seatStatus := seatGrid[i][j]
-	numAdjOccSeats := util.CheckAdjacent(seatGrid, i, j, "#")
-
-	if seatStatus == "L" && numAdjOccSeats == 0 {
-		return "#"
-	}
-	if seatStatus == "#" && numAdjOccSeats >= 4 {
-		return "L"
-	}
-	return seatStatus
-}
-
-func part1(input [][]string) int {
-
-	oldSeatGrid := util.CopyGrid(input)
-
-	counter := 0
 	for {
-		counter++
 
-		newSeatGrid := stepModel1(oldSeatGrid)
+		newSeatGrid := generateNewGrid(oldSeatGrid, part)
 
 		if reflect.DeepEqual(newSeatGrid, oldSeatGrid) {
-			return util.CountOccurences(newSeatGrid, "#")
+			return newSeatGrid
 		}
 
 		oldSeatGrid = util.CopyGrid(newSeatGrid)
 
 	}
-
 }
 
-func stepModel2(oldSeatGrid [][]string) [][]string {
-
-	newSeatGrid := util.CopyGrid(oldSeatGrid)
-
-	for i := 0; i < len(oldSeatGrid); i++ {
-		for j := 0; j < len(oldSeatGrid[i]); j++ {
-			newSeatGrid[i][j] = modelSeat2(oldSeatGrid, i, j)
-		}
-	}
-
-	return newSeatGrid
-
-}
-
-func modelSeat2(seatGrid [][]string, i int, j int) string {
-
-	seatStatus := seatGrid[i][j]
-	numOccSeatsInSight := util.CheckLineOfSight(seatGrid, i, j, "#")
-
-	if seatStatus == "L" && numOccSeatsInSight == 0 {
-		return "#"
-	}
-	if seatStatus == "#" && numOccSeatsInSight >= 5 {
-		return "L"
-	}
-	return seatStatus
-}
-
-func runSeatModel2Num(oldSeatGrid [][]string, iterations int) [][]string {
+func runSimulationNTimes(oldSeatGrid [][]string, iterations int, part int) [][]string {
 
 	newSeatGrid := util.CopyGrid(oldSeatGrid)
 	fmt.Println("i:", 0)
@@ -92,7 +33,7 @@ func runSeatModel2Num(oldSeatGrid [][]string, iterations int) [][]string {
 	fmt.Println()
 
 	for i := 1; i < iterations+1; i++ {
-		newSeatGrid = stepModel2(oldSeatGrid)
+		newSeatGrid = generateNewGrid(oldSeatGrid, part)
 
 		fmt.Println("i:", i)
 		util.PrintGrid(newSeatGrid)
@@ -104,23 +45,55 @@ func runSeatModel2Num(oldSeatGrid [][]string, iterations int) [][]string {
 	return newSeatGrid
 }
 
+func generateNewGrid(oldSeatGrid [][]string, part int) [][]string {
+
+	newSeatGrid := util.CopyGrid(oldSeatGrid)
+
+	for i := 0; i < len(oldSeatGrid); i++ {
+		for j := 0; j < len(oldSeatGrid[i]); j++ {
+			newSeatGrid[i][j] = generateNewCell(oldSeatGrid, i, j, part)
+		}
+	}
+
+	return newSeatGrid
+
+}
+
+func generateNewCell(seatGrid [][]string, i int, j int, part int) string {
+
+	seatStatus := seatGrid[i][j]
+	occThresh := -1
+	numOccSeats := -1
+
+	if part == 1 {
+		numOccSeats = util.CheckAdjacent(seatGrid, i, j, "#")
+		occThresh = 4
+	} else if part == 2 {
+		numOccSeats = util.CheckLineOfSight(seatGrid, i, j, "#")
+		occThresh = 5
+	}
+
+	if seatStatus == "L" && numOccSeats == 0 {
+		return "#"
+	}
+	if seatStatus == "#" && numOccSeats >= occThresh {
+		return "L"
+	}
+
+	return seatStatus
+}
+
+func part1(input [][]string) int {
+
+	finalGrid := runSimulation(input, 1)
+	return util.CountOccurences(finalGrid, "#")
+
+}
+
 func part2(input [][]string) int {
 
-	oldSeatGrid := util.CopyGrid(input)
-
-	counter := 0
-	for {
-		counter++
-
-		newSeatGrid := stepModel2(oldSeatGrid)
-
-		if reflect.DeepEqual(newSeatGrid, oldSeatGrid) {
-			return util.CountOccurences(newSeatGrid, "#")
-		}
-
-		oldSeatGrid = util.CopyGrid(newSeatGrid)
-
-	}
+	finalGrid := runSimulation(input, 2)
+	return util.CountOccurences(finalGrid, "#")
 
 }
 

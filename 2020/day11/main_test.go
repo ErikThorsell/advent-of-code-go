@@ -43,7 +43,7 @@ func Test21(t *testing.T) {
 	exampleResult, _ := ioutil.ReadFile("./example2-1rot")
 	parsedExampleResult, _ := util.ParseInputByLineAndRune(string(exampleResult))
 
-	actual := runSeatModel2Num(parsedExampleData, 1)
+	actual := runSimulationNTimes(parsedExampleData, 1, 2)
 
 	if !reflect.DeepEqual(actual, parsedExampleResult) {
 		t.Errorf("Test failed!")
@@ -62,7 +62,7 @@ func Test22(t *testing.T) {
 	exampleResult, _ := ioutil.ReadFile("./example2-2rot")
 	parsedExampleResult, _ := util.ParseInputByLineAndRune(string(exampleResult))
 
-	actual := runSeatModel2Num(parsedExampleData, 2)
+	actual := runSimulationNTimes(parsedExampleData, 2, 2)
 
 	if !reflect.DeepEqual(actual, parsedExampleResult) {
 		t.Errorf("Test failed!")
