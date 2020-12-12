@@ -10,7 +10,20 @@ import (
 func Test1(t *testing.T) {
 
 	exampleData, _ := ioutil.ReadFile("./example")
-	exampleResult := 34
+	exampleResult := 35
+
+	parsedExampleData := util.ParseInputBySepToInts(string(exampleData), '\n')
+	actual := part1(parsedExampleData)
+
+	if exampleResult != actual {
+		t.Errorf("Test failed, expected: '%d', got:  '%d'", exampleResult, actual)
+	}
+}
+
+func Test12(t *testing.T) {
+
+	exampleData, _ := ioutil.ReadFile("./example2")
+	exampleResult := 220
 
 	parsedExampleData := util.ParseInputBySepToInts(string(exampleData), '\n')
 	actual := part1(parsedExampleData)

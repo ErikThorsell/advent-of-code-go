@@ -23,7 +23,7 @@ func Test1(t *testing.T) {
 func Test2(t *testing.T) {
 
 	exampleData, _ := ioutil.ReadFile("./example")
-	exampleResult := 0
+	exampleResult := 8
 
 	parsedExampleData := util.ParseInputByLine(string(exampleData))
 	actual := part2(parsedExampleData)
