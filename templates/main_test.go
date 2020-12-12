@@ -12,7 +12,7 @@ func Test1(t *testing.T) {
 	exampleData, _ := ioutil.ReadFile("./example")
 	exampleResult := 0
 
-	parsedExampleData := util.ParseInputByLineAndSep(string(exampleData), ',')
+	parsedExampleData := util.ParseInputByLine(string(exampleData))
 	actual := part1(parsedExampleData)
 
 	if exampleResult != actual {
@@ -25,7 +25,7 @@ func Test2(t *testing.T) {
 	exampleData, _ := ioutil.ReadFile("./example")
 	exampleResult := 0
 
-	parsedExampleData := util.ParseInputByLineAndSep(string(exampleData), ',')
+	parsedExampleData := util.ParseInputByLine(string(exampleData))
 	actual := part2(parsedExampleData)
 
 	if exampleResult != actual {
