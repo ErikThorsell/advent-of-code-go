@@ -137,3 +137,10 @@ func ParseNumberDashNumber(input string) (int, int) {
 	listOfStrings := strings.Split(input, "-")
 	return ToInt(listOfStrings[0]), ToInt(listOfStrings[1])
 }
+
+func ParseBusTableInput(input string) (int, []string) {
+	twoStrings := ParseInputByLine(input)
+	timestamp := ToInt(twoStrings[0])
+	busTable := ParseInputByLineAndSep(twoStrings[1], ',')
+	return timestamp, busTable[0]
+}

@@ -1,5 +1,7 @@
 package util
 
+import "math"
+
 // Max returns the bigger int of x and y
 func Max(x int, y int) int {
 	if x >= y {
@@ -40,4 +42,14 @@ func SumSlice(ints []int) int {
 		sum += i
 	}
 	return sum
+}
+
+// GetIntRem returns the reminder of two integers
+func GetIntRem(a, b int) float64 {
+	return math.Remainder(float64(a), float64(b))
+}
+
+// RemIsZero checks if the remainder of two ints is zero
+func RemIsZero(a, b int) bool {
+	return GetIntRem(a, b) == 0
 }
