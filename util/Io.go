@@ -138,6 +138,10 @@ func ParseNumberDashNumber(input string) (int, int) {
 	return ToInt(listOfStrings[0]), ToInt(listOfStrings[1])
 }
 
+// ParseBusTableInput parses a file that looks like this:
+// 939
+// 7,13,x,x,59,x,31,19
+// https://adventofcode.com/2020/day/13
 func ParseBusTableInput(input string) (int, []string) {
 	twoStrings := ParseInputByLine(input)
 	timestamp := ToInt(twoStrings[0])

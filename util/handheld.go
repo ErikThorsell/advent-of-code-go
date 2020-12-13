@@ -10,6 +10,7 @@ type HHInstr struct {
 	arg int
 }
 
+// GetNumInstr returns the number of instructions that are interesting
 func GetNumInstr(instructions []HHInstr) int {
 	numNJ := 0
 	for _, inst := range instructions {
@@ -20,6 +21,7 @@ func GetNumInstr(instructions []HHInstr) int {
 	return numNJ
 }
 
+// ParseInstructions returns a list of Handheld instructions
 func ParseInstructions(input []string) []HHInstr {
 	var instructions []HHInstr
 	for _, inst := range input {
@@ -31,6 +33,7 @@ func ParseInstructions(input []string) []HHInstr {
 	return instructions
 }
 
+// AlternateProgram swappes the variant:th instruction
 func AlternateProgram(instructions []HHInstr, variant int) []HHInstr {
 
 	cp := make([]HHInstr, len(instructions))

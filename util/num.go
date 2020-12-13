@@ -10,18 +10,20 @@ func IntInSlice(a int, list []int) bool {
 	return false
 }
 
-func SliceFromSlice(s []int, is []int) []int {
-	newSlice := []int{}
-	for _, i := range is {
-		newSlice = append(newSlice, s[i])
+// MakeRange returns a list with nummbers between min and max (inclusive)
+func MakeRange(min int, max int) []int {
+	rangeList := make([]int, max-min+1)
+	for i := range rangeList {
+		rangeList[i] = min + i
 	}
-	return newSlice
+	return rangeList
 }
 
-func RealMod(d, m int) int {
-	var res int = d % m
-	if (res < 0 && m > 0) || (res > 0 && m < 0) {
-		return res + m
+// SumSlice sums all ints in a slice
+func SumSlice(ints []int) int {
+	sum := 0
+	for _, i := range ints {
+		sum += i
 	}
-	return res
+	return sum
 }

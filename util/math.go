@@ -18,30 +18,12 @@ func Min(x int, y int) int {
 	return y
 }
 
-// MakeRange returns a list with nummbers between min and max (inclusive)
-func MakeRange(min int, max int) []int {
-	rangeList := make([]int, max-min+1)
-	for i := range rangeList {
-		rangeList[i] = min + i
-	}
-	return rangeList
-}
-
 // Abs returns the absolute value of x
 func Abs(x int) int {
 	if x <= 0 {
 		return -x
 	}
 	return x
-}
-
-// SumSlice sums all ints in a slice
-func SumSlice(ints []int) int {
-	sum := 0
-	for _, i := range ints {
-		sum += i
-	}
-	return sum
 }
 
 // GetIntRem returns the reminder of two integers
@@ -52,4 +34,13 @@ func GetIntRem(a, b int) float64 {
 // RemIsZero checks if the remainder of two ints is zero
 func RemIsZero(a, b int) bool {
 	return GetIntRem(a, b) == 0
+}
+
+// RealMod computes the mod like Python do
+func RealMod(d, m int) int {
+	var res int = d % m
+	if (res < 0 && m > 0) || (res > 0 && m < 0) {
+		return res + m
+	}
+	return res
 }
