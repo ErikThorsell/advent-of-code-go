@@ -148,3 +148,26 @@ func ParseBusTableInput(input string) (int, []string) {
 	busTable := ParseInputByLineAndSep(twoStrings[1], ',')
 	return timestamp, busTable[0]
 }
+
+//func ParseBitMask(input string) (string, [][]int) {
+//	lineOfStrings := ParseInputByLine(input)
+//
+//	program := make(map[string][][]int)
+//	var ops [][]int
+//	for _, row := range lineOfStrings {
+//
+//		if strings.Contains(row, "mask") {
+//			mask := strings.Fields(row)[2]
+//			continue
+//		} else {
+//			re := regexp.MustCompile("[0-9]+")
+//			mv := re.FindAllString(row, -1)
+//			ops = append(ops, []int{ToInt(mv[0]), ToInt(mv[1])})
+//		}
+//
+//	}
+//
+//	return mask, ops
+//
+//}
+//
