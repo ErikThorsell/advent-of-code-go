@@ -15,7 +15,9 @@ func part1(input []int, end int) int {
 	counter := 0
 	for {
 
-		//		fmt.Println("Mem:", mem, "LN:", lastNum)
+		if end < 100 {
+			fmt.Println("T:", counter, "LN:", lastNum, "Mem:", mem)
+		}
 
 		if counter == end {
 			return lastNum
@@ -47,13 +49,8 @@ func part2(input []int, end int) int {
 
 	mem := make(map[int][]int)
 	var lastNum int
-	var counter int
 
-	for counter = 1; counter <= len(input); counter++ {
-		mem[input[counter-1]] = []int{0, counter}
-		lastNum = input[counter-1]
-	}
-
+	counter := 0
 	for {
 
 		if end < 100 {
@@ -64,19 +61,26 @@ func part2(input []int, end int) int {
 			return lastNum
 		}
 
-		if mem[lastNum][0] == 0 { // first time spoken
-			lastNum = 0
-			mem[lastNum] = []int{mem[lastNum][1], counter}
-
+		if counter < len(input) {
+			mem[input[counter]] = []int{-1, counter}
+			lastNum = input[counter]
 		} else {
-			prev := mem[lastNum][1]
-			preprev := mem[lastNum][0]
-			lastNum = prev - preprev
-			mem[lastNum] = []int{prev, counter}
+			if mem[lastNum][0] == -1 {
+				lastNum = 0
+				mem[lastNum] = []int{mem[lastNum][1], counter}
+			} else {
+				prev := mem[lastNum][1]
+				preprev := mem[lastNum][0]
+				lastNum = prev - preprev
+				_, ok := mem[lastNum] // first time?
+				if !ok {
+					mem[lastNum] = []int{-1, counter} // Yes
+				} else {
+					mem[lastNum] = []int{mem[lastNum][1], counter} // No
+				}
+			}
 		}
-
 		counter++
-
 	}
 }
 
@@ -97,7 +101,7 @@ func main() {
 	fmt.Println()
 
 	s = time.Now()
-	ans2 := part2(parsedInput, 2020)
+	ans2 := part2(parsedInput, 30000000)
 	t = time.Now()
 	e = t.Sub(s)
 	fmt.Println("Answer for second question: ", ans2)

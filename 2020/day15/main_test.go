@@ -26,7 +26,7 @@ func Test2(t *testing.T) {
 	exampleResult := 175594
 
 	parsedExampleData := util.ParseInputBySepToInts(string(exampleData), ',')
-	actual := part2(parsedExampleData, 2020)
+	actual := part2(parsedExampleData, 30000000)
 
 	if exampleResult != actual {
 		t.Errorf("Test failed, expected: '%d', got:  '%d'", exampleResult, actual)
