@@ -9,7 +9,7 @@ import (
 
 func part1(input []int, end int) int {
 
-	mem := make(map[int][]int) // map number to rounds it was last spoken
+	mem := make(map[int][]int)
 	var lastNum int
 
 	counter := 0
@@ -49,35 +49,31 @@ func part2(input []int, end int) int {
 
 	mem := make(map[int][]int)
 	var lastNum int
+	var counter int
 
-	counter := 0
+	for counter = 0; counter < len(input); counter++ {
+		mem[input[counter]] = []int{-1, counter}
+		lastNum = input[counter]
+	}
+
 	for {
-
-		if end < 100 {
-			fmt.Println("T:", counter, "LN:", lastNum, "Mem:", mem)
-		}
 
 		if counter == end {
 			return lastNum
 		}
 
-		if counter < len(input) {
-			mem[input[counter]] = []int{-1, counter}
-			lastNum = input[counter]
+		if mem[lastNum][0] == -1 {
+			lastNum = 0
+			mem[lastNum] = []int{mem[lastNum][1], counter}
 		} else {
-			if mem[lastNum][0] == -1 {
-				lastNum = 0
-				mem[lastNum] = []int{mem[lastNum][1], counter}
+			prev := mem[lastNum][1]
+			preprev := mem[lastNum][0]
+			lastNum = prev - preprev
+			_, ok := mem[lastNum] // first time?
+			if !ok {
+				mem[lastNum] = []int{-1, counter} // Yes
 			} else {
-				prev := mem[lastNum][1]
-				preprev := mem[lastNum][0]
-				lastNum = prev - preprev
-				_, ok := mem[lastNum] // first time?
-				if !ok {
-					mem[lastNum] = []int{-1, counter} // Yes
-				} else {
-					mem[lastNum] = []int{mem[lastNum][1], counter} // No
-				}
+				mem[lastNum] = []int{mem[lastNum][1], counter} // No
 			}
 		}
 		counter++
