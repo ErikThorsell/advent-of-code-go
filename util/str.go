@@ -19,3 +19,18 @@ func IsInt(s string) bool {
 	}
 	return false
 }
+
+// RemoveStringByValue removes the i:th string
+func RemoveStringByValue(s string, xs []string) []string {
+	for i, v := range xs {
+		if v == s {
+			return append(xs[:i], xs[i+1:]...)
+		}
+	}
+	return xs
+}
+
+// RemoveStringByIndex removes the i:th string
+func RemoveStringByIndex(i int, s []string) []string {
+	return append(s[:i], s[i+1:]...)
+}

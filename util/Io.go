@@ -151,6 +151,7 @@ func ParseBusTableInput(input string) (int, []string) {
 	return timestamp, busTable[0]
 }
 
+// ParseTicketInput parses the input for Day 16, 2020
 func ParseTicketInput(input []string) (map[string][][]int, []int, [][]int) {
 
 	// Create a tickets map

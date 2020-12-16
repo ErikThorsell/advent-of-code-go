@@ -49,9 +49,9 @@ func getInvalidTicketNumbers(tickets [][]int, validNumbers []int) ([]int, [][]in
 
 func part2(ticketConstraints map[string][][]int, myTicket []int, otherTickets [][]int, invalidTickets [][]int) int {
 	validTickets := getValidTickets(otherTickets, invalidTickets)
-	fmt.Println("Valid Tickets:", len(validTickets))
-	constraintIndex := computeConstraintIndex(ticketConstraints, validTickets)
-	return computeDepartureProduct(constraintIndex, myTicket)
+	constraintToRange := addIndiciesToConstraints(ticketConstraints, validTickets)
+	constraintToIndex := getIndexForEachConstraint(constraintToRange)
+	return computeDepartureProduct(constraintToIndex, myTicket)
 }
 
 func getValidTickets(candidateTickets [][]int, invalidTickets [][]int) [][]int {
@@ -71,37 +71,62 @@ func getValidTickets(candidateTickets [][]int, invalidTickets [][]int) [][]int {
 	return validTickets
 }
 
-func computeConstraintIndex(constraints map[string][][]int, tickets [][]int) map[string]int {
+func addIndiciesToConstraints(constraints map[string][][]int, tickets [][]int) map[string][]int {
 
 	constraintToRange := make(map[string][]int)
-	constraintToIndex := make(map[string]int)
 
 	for c, v := range constraints {
 		lowList := util.MakeRange(v[0][0], v[0][1])
 		highList := util.MakeRange(v[1][0], v[1][1])
 		vRange := append(lowList, highList...)
 
-		for _, t := range tickets {
-			for ix, x := range t {
-				if util.IntInSlice(x, vRange) {
-					constraintToRange[c] = append(constraintToRange[c], ix)
+		availIds := util.MakeRange(0, len(tickets[0])-1)
+
+		for _, ticket := range tickets {
+			for valueIdx, ticketValue := range ticket {
+				if !util.IntInSlice(ticketValue, vRange) {
+					availIds = util.RemoveIntByValue(valueIdx, availIds)
 				}
 			}
 		}
-
+		constraintToRange[c] = append(constraintToRange[c], availIds...)
 	}
+	return constraintToRange
+}
 
-	constraintToIndex = util.GetMostFrequentForIndex(constraintToRange)
+func getIndexForEachConstraint(constraintToRange map[string][]int) map[string]int {
 
-	return constraintToIndex
+	constraintToIndex := make(map[string]int)
 
+	for {
+
+		if len(constraintToRange) == 0 {
+			return constraintToIndex
+		}
+
+		for c, r := range constraintToRange {
+
+			if len(r) == 1 {
+				constraintToIndex[c] = r[0]
+				delete(constraintToRange, c)
+				constraintToRange = removePossibleIndex(constraintToRange, r[0])
+			}
+		}
+	}
+}
+
+func removePossibleIndex(constraintToRange map[string][]int, idx int) map[string][]int {
+	newMap := make(map[string][]int)
+	for c, r := range constraintToRange {
+		newMap[c] = util.RemoveIntByValue(idx, r)
+	}
+	return newMap
 }
 
 func computeDepartureProduct(constraintIndex map[string]int, ticket []int) int {
 	prod := 1
 	for c, i := range constraintIndex {
 		if strings.Contains(c, "departure") {
-			fmt.Println("C:", c, "V:", ticket[i])
 			prod *= ticket[i]
 		}
 	}
@@ -111,7 +136,7 @@ func computeDepartureProduct(constraintIndex map[string]int, ticket []int) int {
 func main() {
 
 	rawInput := util.FetchInputForDay("2020", "16")
-	parsedInput := util.ParseInputByLine(rawInput)
+	parsedInput := util.ParseInputByLine(string(rawInput))
 	ticketConstraints, myTicket, otherTickets := util.ParseTicketInput(parsedInput)
 	fmt.Println("Done parsing input.")
 	fmt.Println()

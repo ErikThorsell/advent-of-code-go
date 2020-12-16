@@ -2,6 +2,7 @@ package main
 
 import (
 	"io/ioutil"
+	"reflect"
 	"testing"
 
 	"github.com/ErikThorsell/advent-of-code-go/util"
@@ -21,17 +22,22 @@ func Test1(t *testing.T) {
 	}
 }
 
-func Test2(t *testing.T) {
+func TestRemoveString(t *testing.T) {
 
-	exampleData, _ := ioutil.ReadFile("./example2")
-	exampleResult := 1716
+	s := []string{"one", "two", "three", "four", "five"}
 
-	parsedExampleData := util.ParseInputByLine(string(exampleData))
-	ticketConstraints, myTicket, otherTickets := util.ParseTicketInput(parsedExampleData)
-	_, invalidTickets := part1(ticketConstraints, otherTickets)
-	actual := part2(ticketConstraints, myTicket, otherTickets, invalidTickets)
+	expected := []string{"one", "three", "four", "five"}
+	actual := util.RemoveStringByIndex(1, s)
 
-	if exampleResult != actual {
-		t.Errorf("Test failed, expected: '%d', got:  '%d'", exampleResult, actual)
+	if !reflect.DeepEqual(expected, actual) {
+		t.Errorf("Test failed, expected: '%v', got:  '%v'", expected, actual)
 	}
+
+	expected2 := []string{"one", "three", "five"}
+	actual2 := util.RemoveStringByValue("four", expected)
+
+	if !reflect.DeepEqual(expected2, actual2) {
+		t.Errorf("Test failed, expected: '%v', got:  '%v'", expected2, actual2)
+	}
+
 }
