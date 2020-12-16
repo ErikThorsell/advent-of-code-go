@@ -69,11 +69,19 @@ func part2(input []int, end int) int {
 			prev := mem[lastNum][1]
 			preprev := mem[lastNum][0]
 			lastNum = prev - preprev
+<<<<<<< HEAD
 			_, ok := mem[lastNum] // first time?
 			if !ok {
 				mem[lastNum] = []int{-1, counter} // Yes
 			} else {
 				mem[lastNum] = []int{mem[lastNum][1], counter} // No
+=======
+			_, ok := mem[lastNum]
+			if ok {
+				mem[lastNum] = []int{mem[lastNum][1], counter}
+			} else {
+				mem[lastNum] = []int{-1, counter}
+>>>>>>> 0afe736... Add solution for Part 1, Day 16, 2020
 			}
 		}
 		counter++

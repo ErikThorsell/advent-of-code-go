@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 )
@@ -74,6 +75,7 @@ func FetchInputForDay(year string, day string) string {
 		log.Fatal(err)
 	}
 	fmt.Println("Input retrieved, happy coding!")
+	fmt.Println(string(data))
 	return string(data)
 }
 
@@ -149,25 +151,51 @@ func ParseBusTableInput(input string) (int, []string) {
 	return timestamp, busTable[0]
 }
 
-//func ParseBitMask(input string) (string, [][]int) {
-//	lineOfStrings := ParseInputByLine(input)
-//
-//	program := make(map[string][][]int)
-//	var ops [][]int
-//	for _, row := range lineOfStrings {
-//
-//		if strings.Contains(row, "mask") {
-//			mask := strings.Fields(row)[2]
-//			continue
-//		} else {
-//			re := regexp.MustCompile("[0-9]+")
-//			mv := re.FindAllString(row, -1)
-//			ops = append(ops, []int{ToInt(mv[0]), ToInt(mv[1])})
-//		}
-//
-//	}
-//
-//	return mask, ops
-//
-//}
-//
+func ParseTicketInput(input []string) (map[string][][]int, []int, [][]int) {
+
+	// Create a tickets map
+	ticketConstraints := make(map[string][][]int)
+	for _, row := range input {
+		if row == "" {
+			break
+		}
+		name := strings.TrimSpace(strings.Split(row, ":")[0])
+		re := regexp.MustCompile("[0-9]+")
+		ranges := re.FindAllString(row, -1)
+		ticketConstraints[name] = [][]int{
+			{ToInt(ranges[0]), ToInt(ranges[1])},
+			{ToInt(ranges[2]), ToInt(ranges[3])},
+		}
+	}
+
+	// Find my own ticket
+	myTicket := []int{}
+	for i, row := range input {
+		if strings.Contains(row, "your ticket") {
+			myRow := input[i+1]
+			for _, v := range strings.Split(myRow, ",") {
+				myTicket = append(myTicket, ToInt(v))
+			}
+		}
+	}
+
+	// Find nearby tickets
+	collect := false
+	otherTickets := [][]int{}
+	for _, row := range input {
+		if strings.Contains(row, "nearby tickets") {
+			collect = true
+			continue
+		}
+		if collect {
+			ticket := []int{}
+			for _, v := range strings.Split(row, ",") {
+				ticket = append(ticket, ToInt(v))
+			}
+			otherTickets = append(otherTickets, ticket)
+		}
+	}
+
+	return ticketConstraints, myTicket, otherTickets
+
+}
