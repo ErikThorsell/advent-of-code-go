@@ -23,10 +23,10 @@ func Test1(t *testing.T) {
 func Test2(t *testing.T) {
 
 	exampleData, _ := ioutil.ReadFile("./example")
-	exampleResult := 0
+	exampleResult := 848
 
 	parsedExampleData := util.ParseInputByLine(string(exampleData))
-	actual := part2(parsedExampleData)
+	actual := part2(parsedExampleData, 6)
 
 	if exampleResult != actual {
 		t.Errorf("Test failed, expected: '%d', got:  '%d'", exampleResult, actual)
