@@ -10,43 +10,43 @@ import (
 // ShuntingYard -> https://en.wikipedia.org/wiki/Shunting-yard_algorithm
 func ShuntingYard(expression []string, precedence map[string]int) int {
 
-	outputQueue := []string{}
-	operatorStack := []string{}
+	values := []string{}
+	operators := []string{}
 
 	for _, t := range expression {
 		if IsInt(t) {
-			outputQueue = append(outputQueue, t)
+			values = append(values, t)
 		} else if t == "(" {
-			operatorStack = append(operatorStack, t)
+			operators = append(operators, t)
 		} else if t == ")" {
-			topOfStack := peek(operatorStack)
+			topOfStack := peek(operators)
 			for {
 				if topOfStack == "(" || topOfStack == "" {
 					break
 				}
-				operatorStack, outputQueue = applyOperator(operatorStack, outputQueue)
-				topOfStack = peek(operatorStack)
+				operators, values = applyOperator(operators, values)
+				topOfStack = peek(operators)
 			}
-			operatorStack = operatorStack[:len(operatorStack)-1]
+			operators = operators[:len(operators)-1]
 		} else { // t is an operator (Wikipedia also lists "function", we ain't gonna bother with that.)
-			topOfStack := peek(operatorStack)
+			topOfStack := peek(operators)
 			for {
 				if topOfStack == "" || topOfStack == "(" || topOfStack == ")" || precedence[t] > precedence[topOfStack] {
 					break
 				}
-				operatorStack, outputQueue = applyOperator(operatorStack, outputQueue)
-				topOfStack = peek(operatorStack)
+				operators, values = applyOperator(operators, values)
+				topOfStack = peek(operators)
 			}
-			operatorStack = append(operatorStack, t)
+			operators = append(operators, t)
 		}
 	}
 	for {
-		if len(operatorStack) == 0 {
+		if len(operators) == 0 {
 			break
 		}
-		operatorStack, outputQueue = applyOperator(operatorStack, outputQueue)
+		operators, values = applyOperator(operators, values)
 	}
-	return ToInt(outputQueue[0])
+	return ToInt(values[0])
 }
 
 func peek(stack []string) string {
