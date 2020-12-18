@@ -11,47 +11,37 @@ import (
 func part1(input []string) int {
 
 	res := 0
+
+	precedenceMap := make(map[string]int)
+	precedenceMap["+"] = 0
+	precedenceMap["*"] = 0
+
 	for _, row := range input {
 		elems := strings.Split(strings.ReplaceAll(row, " ", ""), "")
-		for _, e := range eval(elems) {
-			res += e
-		}
+		r := util.ShuntingYard(elems, precedenceMap)
+		res += r
 	}
 
 	return res
-}
 
-func eval(expr []string) []string {
-	res := term(expr)
-	for {
-		if len(expr) == 0 || expr[0] != "*" {
-			return res
-		}
-		res *= term(expr[1:])
-	}
-}
-
-func term(expr []string) []string {
-	res := factor(expr)
-	for {
-		if len(expr) == 0 || expr[0] != "+" {
-			return res
-		}
-		res += factor(expr[1:])
-	}
-}
-
-func factor(expr []string) string {
-	v, expr := expr[0], expr[1:]
-	if v == "(" {
-		v = eval(expr)
-		expr = expr[1:]
-	}
-	return v
 }
 
 func part2(input []string) int {
-	return 0
+
+	res := 0
+
+	precedenceMap := make(map[string]int)
+	precedenceMap["+"] = 1
+	precedenceMap["*"] = 0
+
+	for _, row := range input {
+		elems := strings.Split(strings.ReplaceAll(row, " ", ""), "")
+		r := util.ShuntingYard(elems, precedenceMap)
+		res += r
+	}
+
+	return res
+
 }
 
 func main() {

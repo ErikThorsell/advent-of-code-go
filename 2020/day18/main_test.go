@@ -10,13 +10,13 @@ import (
 
 func Test1(t *testing.T) {
 
-	for i, f := range []int{1, 2, 3, 4} {
+	for i, f := range []int{1, 2, 3, 4, 5} {
 
 		exampleFile := fmt.Sprintf("./example%d", f)
 		exampleData, _ := ioutil.ReadFile(exampleFile)
 		parsedExampleData := util.ParseInputByLine(string(exampleData))
 
-		exampleResults := []int{71, 51, 26, 13632}
+		exampleResults := []int{71, 51, 26, 13632, 3}
 
 		actual := part1(parsedExampleData)
 
