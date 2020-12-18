@@ -75,7 +75,7 @@ func FetchInputForDay(year string, day string) string {
 		log.Fatal(err)
 	}
 	fmt.Println("Input retrieved, happy coding!")
-	fmt.Println(string(data))
+	fmt.Println("\n", string(data), "\n")
 	return string(data)
 }
 
