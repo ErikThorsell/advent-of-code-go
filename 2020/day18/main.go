@@ -18,8 +18,7 @@ func part1(input []string) int {
 
 	for _, row := range input {
 		elems := strings.Split(strings.ReplaceAll(row, " ", ""), "")
-		r := util.ShuntingYard(elems, precedenceMap)
-		res += r
+		res += util.ShuntingYard(elems, precedenceMap)
 	}
 
 	return res
@@ -36,8 +35,7 @@ func part2(input []string) int {
 
 	for _, row := range input {
 		elems := strings.Split(strings.ReplaceAll(row, " ", ""), "")
-		r := util.ShuntingYard(elems, precedenceMap)
-		res += r
+		res += util.ShuntingYard(elems, precedenceMap)
 	}
 
 	return res
