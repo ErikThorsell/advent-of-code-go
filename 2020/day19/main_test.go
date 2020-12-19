@@ -22,13 +22,19 @@ func Test1(t *testing.T) {
 
 func Test2(t *testing.T) {
 
-	exampleData, _ := ioutil.ReadFile("./example")
-	exampleResult := 0
+	exampleData, _ := ioutil.ReadFile("./example2")
+	exampleResultPart1 := 3
+	exampleResultPart2 := 12
 
 	rules, messages := util.ParseSatelliteInput(string(exampleData))
-	actual := part2(rules, messages)
 
-	if exampleResult != actual {
-		t.Errorf("Test failed, expected: '%d', got:  '%d'", exampleResult, actual)
+	actual1 := part1(rules, messages)
+	actual2 := part2(rules, messages)
+
+	if exampleResultPart1 != actual1 {
+		t.Errorf("Test failed for Part1, expected: '%d', got:  '%d'", exampleResultPart1, actual1)
+	}
+	if exampleResultPart2 != actual2 {
+		t.Errorf("Test failed for Part2, expected: '%d', got:  '%d'", exampleResultPart2, actual2)
 	}
 }

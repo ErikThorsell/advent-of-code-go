@@ -231,13 +231,14 @@ func ParseSatelliteInput(input string) (map[string]SatelliteNode, []string) {
 	for _, rule := range rules {
 		idAndRule := strings.Split(rule, ":")
 		id := idAndRule[0]
-		rule, ruleIsLiteral := parseSatelliteRule(idAndRule[1])
+		rule, ruleIsLiteral := ParseSatelliteRule(idAndRule[1])
 		nodeMap[id] = SatelliteNode{ID: id, Rule: rule, IsLiteral: ruleIsLiteral}
 	}
 	return nodeMap, messages
 }
 
-func parseSatelliteRule(rule string) (string, bool) {
+// ParseSatelliteRule parses a Rule: 2 5 | 3
+func ParseSatelliteRule(rule string) (string, bool) {
 	trimmed := strings.TrimSpace(rule)
 	if strings.Contains(trimmed, "\"") {
 		return strings.ReplaceAll(trimmed, "\"", ""), true
