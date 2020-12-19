@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/ErikThorsell/advent-of-code-go/util"
 	"github.com/glenn-brown/golang-pkg-pcre/src/pkg/pcre"
@@ -18,12 +19,12 @@ func part1(nodeMap map[string]util.SatelliteNode, messages []string) int {
 func part2(nodeMap map[string]util.SatelliteNode, messages []string) int {
 
 	id := "8"
-	rule, ruleIsLiteral := util.ParseSatelliteRule("42 | 42 8")
-	nodeMap[id] = util.SatelliteNode{ID: id, Rule: rule, IsLiteral: ruleIsLiteral}
+	rule := "42 | 42 8"
+	nodeMap[id] = util.SatelliteNode{ID: id, Rule: rule}
 
 	id = "11"
-	rule, ruleIsLiteral = util.ParseSatelliteRule("42 31 | 42 11 31")
-	nodeMap[id] = util.SatelliteNode{ID: id, Rule: rule, IsLiteral: ruleIsLiteral}
+	rule = "42 31 | 42 11 31"
+	nodeMap[id] = util.SatelliteNode{ID: id, Rule: rule}
 
 	validRegExp := getValidRegexp("0", nodeMap, "2")
 	return countMatches(messages, validRegExp, "2")
@@ -33,8 +34,9 @@ func getValidRegexp(nodeID string, nodeMap map[string]util.SatelliteNode, part s
 
 	node := nodeMap[nodeID]
 
-	if node.IsLiteral {
-		return node.Rule
+	// If the rule contains " it's a character ("a" or "b")
+	if strings.Contains(node.Rule, "\"") {
+		return strings.ReplaceAll(node.Rule, "\"", "")
 	}
 
 	pattern := "(" // every subExp is encapsulated in a capturing group
@@ -55,8 +57,6 @@ func getValidRegexp(nodeID string, nodeMap map[string]util.SatelliteNode, part s
 				if subNode == "11" {
 					sub8 := getValidRegexp("42", nodeMap, part)
 					sub11 := getValidRegexp("31", nodeMap, part)
-					fmt.Println(sub8)
-					fmt.Println(sub11)
 					sub8And11 := fmt.Sprintf("(?<eleven>(%s%s|%[1]s(?&eleven)%[2]s))", sub8, sub11)
 					concatRules = append(concatRules, sub8And11)
 					continue
@@ -105,20 +105,20 @@ func main() {
 	fmt.Println("Done parsing input.")
 	fmt.Println()
 
-	//	// PART 1
-	//	s := time.Now()
-	//	ans1 := part1(rules, messages)
-	//	t := time.Now()
-	//	e := t.Sub(s)
-	//	fmt.Println("Answer for first question: ", ans1)
-	//	fmt.Println("First answer retrieved in: ", e)
-	//	fmt.Println()
+	// PART 1
+	s := time.Now()
+	ans1 := part1(rules, messages)
+	t := time.Now()
+	e := t.Sub(s)
+	fmt.Println("Answer for first question: ", ans1)
+	fmt.Println("First answer retrieved in: ", e)
+	fmt.Println()
 
-	//	s = time.Now()
+	s = time.Now()
 	ans2 := part2(rules, messages)
-	//	t = time.Now()
-	//	e = t.Sub(s)
+	t = time.Now()
+	e = t.Sub(s)
 	fmt.Println("Answer for second question: ", ans2)
-	//	fmt.Println("Second answer retrieved in: ", e)
+	fmt.Println("Second answer retrieved in: ", e)
 
 }

@@ -203,9 +203,8 @@ func ParseTicketInput(input []string) (map[string][][]int, []int, [][]int) {
 
 // SatelliteNode denotes a node for https://adventofcode.com/2020/day/19
 type SatelliteNode struct {
-	ID        string
-	Rule      string
-	IsLiteral bool
+	ID   string
+	Rule string
 }
 
 // ParseSatelliteInput parses the input for https://adventofcode.com/2020/day/19
@@ -213,13 +212,11 @@ type SatelliteNode struct {
 // Node {
 //	ID   1
 //  Rule 2 5 | 3
-//  IsLiteral false
 // }
 //
 // Node {
 //	ID   1
 //  Rule "a"
-//  IsLiteral true
 // }
 func ParseSatelliteInput(input string) (map[string]SatelliteNode, []string) {
 
@@ -231,17 +228,8 @@ func ParseSatelliteInput(input string) (map[string]SatelliteNode, []string) {
 	for _, rule := range rules {
 		idAndRule := strings.Split(rule, ":")
 		id := idAndRule[0]
-		rule, ruleIsLiteral := ParseSatelliteRule(idAndRule[1])
-		nodeMap[id] = SatelliteNode{ID: id, Rule: rule, IsLiteral: ruleIsLiteral}
+		rule := strings.TrimSpace(idAndRule[1])
+		nodeMap[id] = SatelliteNode{ID: id, Rule: rule}
 	}
 	return nodeMap, messages
-}
-
-// ParseSatelliteRule parses a Rule: 2 5 | 3
-func ParseSatelliteRule(rule string) (string, bool) {
-	trimmed := strings.TrimSpace(rule)
-	if strings.Contains(trimmed, "\"") {
-		return strings.ReplaceAll(trimmed, "\"", ""), true
-	}
-	return trimmed, false
 }
