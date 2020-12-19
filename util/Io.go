@@ -200,3 +200,34 @@ func ParseTicketInput(input []string) (map[string][][]int, []int, [][]int) {
 	return ticketConstraints, myTicket, otherTickets
 
 }
+
+// SatelliteNode denotes a node for https://adventofcode.com/2020/day/19
+type SatelliteNode struct {
+	ID   string
+	Deps []string
+	Rule string
+}
+
+// ParseSatelliteInput parses the input for https://adventofcode.com/2020/day/19
+func ParseSatelliteInput(input string) (map[string]SatelliteNode, []string) {
+
+	rulesAndMessages := ParseInputByBlankLine(input)
+	rules := ParseInputByLine(rulesAndMessages[0])
+	messages := ParseInputByLine(rulesAndMessages[1])
+
+	nodeMap := make(map[string]SatelliteNode)
+	for _, rule := range rules {
+		id := string(rule[0])
+		deps := RemoveDuplicateString(GetIntsAsStrings(rule[1:]))
+		rule := parseSatelliteRule(rule[2:])
+		nodeMap[id] = SatelliteNode{ID: id, Deps: deps, Rule: rule}
+	}
+
+	return nodeMap, messages
+
+}
+
+func parseSatelliteRule(rule string) string {
+	trimmed := strings.TrimSpace(rule)
+	return strings.ReplaceAll(trimmed, "\"", "")
+}
