@@ -11,27 +11,27 @@ import (
 
 // Tile is a grid with an ID
 type Tile struct {
-	ID   int
-	Grid [][]string
+	ID       int
+	variants map[int][][]string
+	borders  map[int][]string
 }
 
 func part1(input []string) int {
 
 	tiles := getTiles(input)
 
-	tileVariants := make(map[int][]Tile)
-	for tileID := range tiles {
-		tileVariants[tileID] = getAllTileOptions(tiles[tileID])
-	}
-
-	tileVariantsBorders := make(map[int]map[int][]string)
-	for tileID, variants := range tileVariants {
-		borders := make(map[int][]string)
-		for variantID, variant := range variants {
-			tileBorders := computeTileBorders(variant)
-			borders[variantID] = tileBorders
+	for _, t := range tiles {
+		fmt.Println("TileID:", t.ID)
+		for i, v := range t.variants {
+			fmt.Println("Variant:", i)
+			util.PrintGrid(v)
+			fmt.Println()
 		}
-		tileVariantsBorders[tileID] = borders
+		for i, b := range t.borders {
+			fmt.Println("Border:", i)
+			fmt.Println(b)
+			fmt.Println()
+		}
 	}
 
 	// The "only" thing remaining is actually finding the tiling :)
@@ -39,84 +39,94 @@ func part1(input []string) int {
 	return -1
 }
 
-func getTiles(input []string) map[int]Tile {
-	tiles := make(map[int]Tile)
+func getTiles(input []string) []Tile {
+	tiles := []Tile{}
 	for _, idAndTile := range input {
-		id := util.GetIntsAsInts(idAndTile)[0]
+		tileID := util.GetIntsAsInts(idAndTile)[0]
 		grid, _ := util.ParseInputByLineAndRune(strings.Join(strings.Split(idAndTile, "\n")[1:], "\n"))
-		tiles[id] = Tile{ID: id, Grid: grid}
+		variants := getAllGridVariants(grid)
+		borders := make(map[int][]string)
+		for i, v := range variants {
+			borders[i] = getGridBorders(v)
+		}
+		tiles = append(tiles, Tile{ID: tileID, variants: variants, borders: borders})
 	}
 	return tiles
 }
 
-func getAllTileOptions(tile Tile) []Tile {
-	flippedTiles := getTileFlips(tile)
-	rotatedAndFlippedTiles := make([]Tile, 0)
-	for _, mt := range flippedTiles {
-		candidateTiles := getTileRotations(mt)
-		for _, ct := range candidateTiles {
-			if !tileInSlice(ct, rotatedAndFlippedTiles) {
-				rotatedAndFlippedTiles = append(rotatedAndFlippedTiles, ct)
+func getAllGridVariants(grid [][]string) map[int][][]string {
+
+	flippedGrids := getGridFlips(grid)
+	rotatedAndFlippedGrids := make([][][]string, 0)
+	for _, mt := range flippedGrids {
+		candidateGrids := getGridRotations(mt)
+		for _, ct := range candidateGrids {
+			if !gridInSlice(ct, rotatedAndFlippedGrids) {
+				rotatedAndFlippedGrids = append(rotatedAndFlippedGrids, ct)
 			}
 		}
 	}
-	return rotatedAndFlippedTiles
+	gridVariants := make(map[int][][]string)
+	for v, grid := range rotatedAndFlippedGrids {
+		gridVariants[v] = grid
+	}
+	return gridVariants
 }
 
-func getTileFlips(tile Tile) []Tile {
+func getGridFlips(grid [][]string) [][][]string {
 
-	flips := make([]Tile, 4)
+	flips := make([][][]string, 4)
 
 	// The original
-	flips[0] = tile
+	flips[0] = grid
 
 	// Flip around horizontal axis
-	grid := make([][]string, 0)
-	for y := len(tile.Grid) - 1; y >= 0; y-- {
-		grid = append(grid, tile.Grid[y])
+	vGrid := make([][]string, 0)
+	for y := len(grid) - 1; y >= 0; y-- {
+		vGrid = append(vGrid, grid[y])
 	}
-	flips[1] = Tile{Grid: grid}
+	flips[1] = vGrid
 
 	// Flip around vertical axis
-	grid = make([][]string, 0)
-	for y := 0; y < len(tile.Grid); y++ {
-		grid = append(grid, make([]string, 0))
-		for x := len(tile.Grid[y]) - 1; x >= 0; x-- {
-			grid[y] = append(grid[y], tile.Grid[y][x])
+	vGrid = make([][]string, 0)
+	for y := 0; y < len(grid); y++ {
+		vGrid = append(vGrid, make([]string, 0))
+		for x := len(grid[y]) - 1; x >= 0; x-- {
+			vGrid[y] = append(vGrid[y], grid[y][x])
 		}
 	}
-	flips[2] = Tile{Grid: grid}
+	flips[2] = vGrid
 
 	// Flip around vertical then horizontal axis
-	grid = make([][]string, 0)
-	for y := 0; y < len(flips[1].Grid); y++ {
-		grid = append(grid, make([]string, 0))
-		for x := len(flips[1].Grid[y]) - 1; x >= 0; x-- {
-			grid[y] = append(grid[y], flips[1].Grid[y][x])
+	vGrid = make([][]string, 0)
+	for y := 0; y < len(flips[1]); y++ {
+		vGrid = append(vGrid, make([]string, 0))
+		for x := len(flips[1]) - 1; x >= 0; x-- {
+			vGrid[y] = append(vGrid[y], flips[1][y][x])
 		}
 	}
-	flips[3] = Tile{Grid: grid}
+	flips[3] = vGrid
 
 	return flips
 
 }
 
-func getTileRotations(tile Tile) []Tile {
+func getGridRotations(grid [][]string) [][][]string {
 
-	rotations := make([]Tile, 4)
+	rotations := make([][][]string, 4)
 
 	// Original
-	rotations[0] = Tile{Grid: util.CopyGrid(tile.Grid)}
+	rotations[0] = util.CopyGrid(grid)
 
 	// Take the previous grid and rotate it 90 degrees
 	for i := 1; i <= 3; i++ {
-		grid := util.CopyGrid(rotations[i-1].Grid)
+		grid := util.CopyGrid(rotations[i-1])
 		for x := range grid {
 			for y := range grid[x] {
-				grid[x][y] = rotations[i-1].Grid[len(grid[x])-y-1][x]
+				grid[x][y] = rotations[i-1][len(grid[x])-y-1][x]
 			}
 		}
-		rotations[i] = Tile{Grid: grid}
+		rotations[i] = grid
 	}
 	return rotations
 }
@@ -132,18 +142,16 @@ func transposeGrid(grid [][]string) [][]string {
 	return tg
 }
 
-func tileInSlice(tile Tile, slice []Tile) bool {
+func gridInSlice(grid [][]string, slice [][][]string) bool {
 	for _, t := range slice {
-		if reflect.DeepEqual(t.Grid, tile.Grid) {
+		if reflect.DeepEqual(t, grid) {
 			return true
 		}
 	}
 	return false
 }
 
-func computeTileBorders(tile Tile) []string {
-
-	grid := tile.Grid
+func getGridBorders(grid [][]string) []string {
 
 	top := strings.Join(grid[0], "")
 
