@@ -13,7 +13,7 @@ func Test1(t *testing.T) {
 	exampleResult := 5
 
 	parsedExampleData := util.ParseInputByLine(string(exampleData))
-	actual, _, _ := part1(parsedExampleData)
+	actual, _ := part1(parsedExampleData)
 
 	if exampleResult != actual {
 		t.Errorf("Test failed, expected: '%d', got:  '%d'", exampleResult, actual)
@@ -26,7 +26,7 @@ func Test2(t *testing.T) {
 	exampleResult := "mxmxvkd,sqjhc,fvjkl"
 
 	parsedExampleData := util.ParseInputByLine(string(exampleData))
-	_, allergenToIngredients, _ := part1(parsedExampleData)
+	_, allergenToIngredients := part1(parsedExampleData)
 	actual := part2(allergenToIngredients)
 
 	if exampleResult != actual {
