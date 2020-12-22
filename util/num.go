@@ -79,3 +79,12 @@ func RemoveIntByValue(value int, ints []int) []int {
 	}
 	return ints
 }
+
+// GetStringsAsInts convertes all strings in a slice to ints and returns the slice
+func GetStringsAsInts(slice []string) []int {
+	rs := []int{}
+	for _, s := range slice {
+		rs = append(rs, ToInt(s))
+	}
+	return rs
+}
