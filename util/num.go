@@ -88,3 +88,14 @@ func GetStringsAsInts(slice []string) []int {
 	}
 	return rs
 }
+
+// GetLargestInSlice returns the largest nummber in the slice -- only works for positive numbers
+func GetLargestInSlice(slice []int) int {
+	largest := -1
+	for _, s := range slice {
+		if s > largest {
+			largest = s
+		}
+	}
+	return largest
+}
