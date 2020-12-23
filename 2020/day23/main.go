@@ -11,90 +11,85 @@ import (
 
 func part1(input []int) string {
 
-	ring := createRing(input, 0)
-	ring = playCrab(ring, 100)
-	ring = putOneFirst(ring)
-	fmt.Print("Sorted ring: ")
-	printRing(ring)
+	ring, lut := createRing(input, len(input))
+	ring = playCrab(ring, lut, 100)
+
+	ring = lut[1]
 
 	return stringRing(ring)[1:]
 }
 
-func playCrab(ring *ring.Ring, iterations int) *ring.Ring {
+func part2(input []int) int {
+
+	ring, lut := createRing(input, 1000000)
+	ring = playCrab(ring, lut, 10000000)
+
+	ring = lut[1]
+	v1 := ring.Next()
+	v2 := v1.Next()
+
+	return v1.Value.(int) * v2.Value.(int)
+}
+
+func createRing(slice []int, length int) (*ring.Ring, map[int]*ring.Ring) {
+
+	r := ring.New(length)
+	largest := util.GetLargestInSlice(slice)
+	lut := make(map[int]*ring.Ring)
+
+	for _, s := range slice {
+		r.Value = s
+		lut[s] = r
+		r = r.Next()
+	}
+
+	for i := largest + 1; i <= length; i++ {
+		r.Value = i
+		lut[i] = r
+		r = r.Next()
+	}
+
+	return r, lut
+}
+
+func playCrab(ring *ring.Ring, lut map[int]*ring.Ring, iterations int) *ring.Ring {
 
 	ringSize := ring.Len()
 
 	i := 0
 	for i < iterations {
-		if util.RealMod(i, 1000) == 0 {
-			fmt.Println("Iteration:", i)
-		}
 
-		//		fmt.Print("Ring: ")
-		//		printRing(ring)
+		subRing := ring.Unlink(3)
+		destination := ring.Value.(int) - 1
 
-		currentCup := ring.Value.(int)
-		destination := currentCup - 1
 		if destination == 0 {
 			destination = ringSize
 		}
-		subRing := ring.Unlink(3)
 
 		for valueInRing(destination, subRing) {
 			destination--
-			destination = util.RealMod(destination, ringSize)
 			if destination == 0 {
 				destination = ringSize
 			}
 		}
 
-		//		fmt.Println("Current:", currentCup)
-		//		fmt.Println("Destination:", destination)
-		//		fmt.Print("Sub Ring:")
-		//		printRing(subRing)
-
-		//		fmt.Println("Rotating to find destination:")
-		for {
-			//			fmt.Print(" > ")
-			//			printRing(ring)
-			v := ring.Value
-			if v == destination {
-				break
-			}
-			ring = ring.Next()
-		}
-
-		//		fmt.Print("Before merge: ")
-		//		printRing(ring)
-
-		ring = ring.Link(subRing)
-		//		fmt.Print("After merge: ")
-		//		printRing(ring)
-
-		for ring.Value != currentCup {
-			ring = ring.Next()
-		}
-		//		fmt.Print("After move back: ")
-		//		printRing(ring)
-
-		//		fmt.Println()
-
-		// Rotate to get next current cup
+		// At first I rotated the ring to find the correct place to put the subRing.
+		// Then I rotated the ring back to ensure ring = ring.Next() on row 87 yield the
+		// correct "current cup".
+		// It took forever (after 15 minutes I was on iteration ~250 000) so I went to
+		// the subreddit: https://www.reddit.com/r/adventofcode/comments/kimluc/2020_day_23_solutions/ggs00yp/
+		// The trick below uses a map[int]*ring.Ring to keep track of which label correspond
+		// to which ring orientation.
+		// This yields an AMAZING speed up, thank you /u/A-UNDERSCORE-D and /u/status_maximizer for teaching
+		// me about how garbage collect works in Golang. The script now terminates in ~3 seconds.
+		dstRing := lut[destination]
+		dstRing.Link(subRing)
 		ring = ring.Next()
 
 		i++
 
 	}
 
-	return ring
-}
-
-func putOneFirst(ring *ring.Ring) *ring.Ring {
-	for i := 0; i < ring.Len(); i++ {
-		if ring.Value != 1 {
-			ring = ring.Next()
-		}
-	}
 	return ring
 }
 
@@ -117,45 +112,11 @@ func valueInRing(value int, ring *ring.Ring) bool {
 	return false
 }
 
-func createRing(slice []int, length int) *ring.Ring {
-
-	largest := util.GetLargestInSlice(slice)
-
-	r := ring.New(len(slice))
-	for _, s := range slice {
-		r.Value = s
-		r = r.Next()
-	}
-
-	if length > len(slice) {
-		er := ring.New(length - len(slice))
-		for i := largest + 1; i <= length; i++ {
-			er.Value = i
-			er = er.Next()
-		}
-		r = r.Link(er)
-	}
-
-	return r
-}
-
 func printRing(ring *ring.Ring) {
 	ring.Do(func(p interface{}) {
 		fmt.Print(p.(int))
 	})
 	fmt.Println()
-}
-
-func part2(input []int) int {
-
-	ring := createRing(input, 1000000)
-	ring = playCrab(ring, 10000000)
-	ring = putOneFirst(ring)
-	v1 := ring.Value.(int)
-	ring = ring.Next()
-	v2 := ring.Value.(int)
-
-	return v1 * v2
 }
 
 func main() {

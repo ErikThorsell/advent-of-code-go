@@ -21,6 +21,19 @@ func Test1(t *testing.T) {
 	}
 }
 
+func TestCreateRing(t *testing.T) {
+	exampleData, _ := ioutil.ReadFile("./example")
+	exampleResult := string(exampleData) + "101112"
+
+	parsedExampleData := util.GetStringsAsInts(strings.Split(string(exampleData), ""))
+	ring, _ := createRing(parsedExampleData, 12)
+	actual := stringRing(ring)
+
+	if exampleResult != actual {
+		t.Errorf("Test failed, expected: '%v', got:  '%v'", exampleResult, actual)
+	}
+}
+
 func Test2(t *testing.T) {
 
 	exampleData, _ := ioutil.ReadFile("./example")
