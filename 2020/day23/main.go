@@ -26,6 +26,9 @@ func playCrab(ring *ring.Ring, iterations int) *ring.Ring {
 
 	i := 0
 	for i < iterations {
+		if util.RealMod(i, 1000) == 0 {
+			fmt.Println("Iteration:", i)
+		}
 
 		//		fmt.Print("Ring: ")
 		//		printRing(ring)
@@ -114,21 +117,26 @@ func valueInRing(value int, ring *ring.Ring) bool {
 	return false
 }
 
-func createRing(slice []int, extra int) *ring.Ring {
+func createRing(slice []int, length int) *ring.Ring {
 
-	if extra > 0 {
-		largest := util.GetLargestInSlice(slice)
-		for i := largest + 1; i <= extra; i++ {
-			slice = append(slice, i)
-		}
-	}
+	largest := util.GetLargestInSlice(slice)
 
-	ring := ring.New(len(slice))
+	r := ring.New(len(slice))
 	for _, s := range slice {
-		ring.Value = s
-		ring = ring.Next()
+		r.Value = s
+		r = r.Next()
 	}
-	return ring
+
+	if length > len(slice) {
+		er := ring.New(length - len(slice))
+		for i := largest + 1; i <= length; i++ {
+			er.Value = i
+			er = er.Next()
+		}
+		r = r.Link(er)
+	}
+
+	return r
 }
 
 func printRing(ring *ring.Ring) {
@@ -140,11 +148,8 @@ func printRing(ring *ring.Ring) {
 
 func part2(input []int) int {
 
-	//ring := createRing(input, 1000000-len(input))
-	//ring = playCrab(ring, 10000000)
-	ring := createRing(input, 10-len(input))
-	printRing(ring)
-	ring = playCrab(ring, 10)
+	ring := createRing(input, 1000000)
+	ring = playCrab(ring, 10000000)
 	ring = putOneFirst(ring)
 	v1 := ring.Value.(int)
 	ring = ring.Next()
