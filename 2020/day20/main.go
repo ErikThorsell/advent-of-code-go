@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"math"
-	"os"
 	"strings"
 	"time"
 
@@ -17,56 +16,43 @@ type Tile struct {
 	borders  map[int][]string
 }
 
-func part1(input []string) int {
+type idCell struct {
+	ID      int
+	variant int
+}
+
+func part1(input []string) (int, []Tile, [][]idCell) {
 
 	tiles := getTiles(input)
+	tileSize := len(tiles[0].variants[0]) // assuming tiles are squares
 	squareSize := int(math.Sqrt(float64(len(tiles))))
 
-	idGrid := make([][]string, squareSize)
-	for i := 0; i < squareSize; i++ {
-		idGrid[i] = make([]string, squareSize)
+	tilingGrid := make([][]string, tileSize*squareSize)
+	for row := 0; row < len(tilingGrid); row++ {
+		tilingGrid[row] = make([]string, len(tilingGrid))
 	}
 
-	variantGrid := make([][]string, squareSize)
-	for i := 0; i < squareSize; i++ {
-		variantGrid[i] = make([]string, squareSize)
-	}
-
-	grid := make([][]string, 10*squareSize)
-	for g := 0; g < len(grid); g++ {
-		grid[g] = make([]string, len(grid))
-	}
-
-	for y := 0; y < len(grid); y++ {
-		for x := 0; x < len(grid[y]); x++ {
-			grid[y][x] = "x"
-		}
+	idGrid := make([][]idCell, squareSize)
+	for row := 0; row < squareSize; row++ {
+		idGrid[row] = make([]idCell, len(idGrid))
 	}
 
 	usedTiles := []Tile{}
-	grid, idGrid = findTiling(tiles, usedTiles, grid, idGrid, variantGrid, 0, 0)
+	tilingGrid, idGrid, _ = findTiling(tiles, usedTiles, tilingGrid, idGrid, 0, 0)
 
-	return -1
+	return sumCorners(idGrid), tiles, idGrid
 }
 
-func p1ans(grid [][]string) int {
-	xs := []string{grid[0][0], grid[0][len(grid)-1], grid[len(grid)-1][0], grid[len(grid)-1][len(grid)-1]}
+func sumCorners(grid [][]idCell) int {
+	xs := []int{grid[0][0].ID, grid[0][len(grid)-1].ID, grid[len(grid)-1][0].ID, grid[len(grid)-1][len(grid)-1].ID}
 	ans := 1
 	for _, s := range xs {
-		ans *= util.ToInt(strings.TrimSpace(s))
+		ans *= s
 	}
 	return ans
 }
 
-func findTiling(tiles []Tile, usedTiles []Tile, grid, idGrid, variantGrid [][]string, ypos, xpos int) ([][]string, [][]string) {
-
-	if len(usedTiles) == len(tiles) {
-		fmt.Println("Answer for Part 1:", p1ans(idGrid))
-		gwb := gridWithoutBorders(tiles, idGrid, variantGrid)
-		wr := findWaterRoughness(gwb)
-		fmt.Println("Answer for Part 2:", wr)
-		os.Exit(-1)
-	}
+func findTiling(tiles []Tile, usedTiles []Tile, grid [][]string, idGrid [][]idCell, ypos, xpos int) ([][]string, [][]idCell, []Tile) {
 
 	for _, t := range tiles {
 
@@ -74,12 +60,10 @@ func findTiling(tiles []Tile, usedTiles []Tile, grid, idGrid, variantGrid [][]st
 			continue
 		}
 
-		//		fmt.Printf("Trying to add Tile %v at (%v, %v)\n", t.ID, ypos, xpos)
+		for variantNumber := 0; variantNumber < len(t.variants); variantNumber++ {
 
-		for i := 0; i < len(t.variants); i++ {
-
-			variant := t.variants[i]
-			borders := t.borders[i] // {top, right, bottom, left}
+			variant := t.variants[variantNumber]
+			borders := t.borders[variantNumber] // {top, right, bottom, left}
 
 			fits := true
 
@@ -92,37 +76,126 @@ func findTiling(tiles []Tile, usedTiles []Tile, grid, idGrid, variantGrid [][]st
 				fits = fits && rightSideOfLeftTile == borders[3]
 			}
 			if fits {
-				//				fmt.Printf("Tile %v, Variant %v FITS!\n", t.ID, i)
 				grid = addTileToGrid(variant, ypos, xpos, grid)
-				idGrid = addIDToGrid(fmt.Sprint(t.ID)+" ", ypos, xpos, idGrid)
-				variantGrid = addVariantToGrid(fmt.Sprint(i)+" ", ypos, xpos, variantGrid)
-				//				util.PrintGrid(grid)
-				//				util.PrintGrid(idGrid)
+				idGrid = addIDToGrid(t.ID, variantNumber, ypos, xpos, idGrid)
 				usedTiles = append(usedTiles, t)
 
 				if xpos == len(grid[ypos])-10 {
-					//					fmt.Println("Trying to add next Tile on next row")
-					//					fmt.Println()
-					findTiling(tiles, usedTiles, grid, idGrid, variantGrid, ypos+10, 0)
+					grid, idGrid, usedTiles = findTiling(tiles, usedTiles, grid, idGrid, ypos+10, 0)
 				} else {
-					//					fmt.Println("Trying to add next Tile on same row")
-					//					fmt.Println()
-					findTiling(tiles, usedTiles, grid, idGrid, variantGrid, ypos, xpos+10)
+					grid, idGrid, usedTiles = findTiling(tiles, usedTiles, grid, idGrid, ypos, xpos+10)
+				}
+
+				if len(usedTiles) == len(tiles) {
+					return grid, idGrid, usedTiles
 				}
 
 				usedTiles = removeTileFromSlice(t, usedTiles)
-				//				fmt.Printf("Unable to fit ANY tile.\nRemoving %v from the used tiles.\n\n", t.ID)
 				grid = clearTile(grid, ypos, xpos)
-				idGrid[ypos/10][xpos/10] = "-1"
-				variantGrid[ypos/10][xpos/10] = "-1"
+				idGrid[ypos/10][xpos/10] = idCell{}
 			}
 		}
-		//		fmt.Printf("No variant of Tile %v fit. NEXT!\n", t.ID)
 	}
-	return grid, idGrid
+	return grid, idGrid, usedTiles
 }
 
-func gridWithoutBorders(tiles []Tile, idGrid, variantGrid [][]string) [][]string {
+func clearTile(grid [][]string, ypos, xpos int) [][]string {
+	for y := ypos; y < ypos+10; y++ {
+		for x := xpos; x < xpos+10; x++ {
+			grid[y][x] = "x"
+		}
+	}
+	return grid
+}
+
+func getBottomOfAboveTile(grid [][]string, ypos, xpos int) string {
+	bottom := []string{}
+	for x := xpos; x < xpos+10; x++ {
+		bottom = append(bottom, grid[ypos-1][x])
+	}
+	return strings.Join(bottom, "")
+}
+
+func getRightSideOfLeftTile(grid [][]string, ypos, xpos int) string {
+	right := []string{}
+	for y := ypos; y < ypos+10; y++ {
+		right = append(right, grid[y][xpos-1])
+	}
+	return strings.Join(right, "")
+}
+
+func addTileToGrid(tile [][]string, ypos, xpos int, grid [][]string) [][]string {
+	for y := ypos; y < ypos+len(tile); y++ {
+		for x := xpos; x < xpos+len(tile); x++ {
+			grid[y][x] = tile[y-ypos][x-xpos]
+		}
+	}
+	return grid
+}
+
+func addIDToGrid(id, variant, ypos, xpos int, idGrid [][]idCell) [][]idCell {
+	idGrid[ypos/10][xpos/10] = idCell{ID: id, variant: variant}
+	return idGrid
+}
+
+func removeTileFromSlice(tile Tile, slice []Tile) []Tile {
+	for i, t := range slice {
+		if t.ID == tile.ID {
+			return append(slice[:i], slice[i+1:]...)
+		}
+	}
+	return slice
+}
+
+func getTiles(input []string) []Tile {
+	tiles := []Tile{}
+	for _, idAndTile := range input {
+		tileID := util.GetIntsAsInts(idAndTile)[0]
+		grid, _ := util.ParseInputByLineAndRune(strings.Join(strings.Split(idAndTile, "\n")[1:], "\n"))
+		variants := getAllGridVariants(grid)
+		borders := make(map[int][]string)
+		for i, v := range variants {
+			borders[i] = util.GetGridBorders(v)
+		}
+		tiles = append(tiles, Tile{ID: tileID, variants: variants, borders: borders})
+	}
+	return tiles
+}
+
+func getAllGridVariants(grid [][]string) map[int][][]string {
+
+	flippedGrids := util.GetGridFlips(grid)
+	rotatedAndFlippedGrids := make([][][]string, 0)
+	for _, mt := range flippedGrids {
+		candidateGrids := util.GetGridRotations(mt)
+		for _, ct := range candidateGrids {
+			if !util.GridInSlice(ct, rotatedAndFlippedGrids) {
+				rotatedAndFlippedGrids = append(rotatedAndFlippedGrids, ct)
+			}
+		}
+	}
+	gridVariants := make(map[int][][]string)
+	for v, grid := range rotatedAndFlippedGrids {
+		gridVariants[v] = grid
+	}
+	return gridVariants
+}
+
+func tileInSlice(tile Tile, slice []Tile) bool {
+	for _, t := range slice {
+		if t.ID == tile.ID {
+			return true
+		}
+	}
+	return false
+}
+
+func part2(tiles []Tile, idGrid [][]idCell) int {
+	gwb := gridWithoutBorders(tiles, idGrid)
+	return findWaterRoughness(gwb)
+}
+
+func gridWithoutBorders(tiles []Tile, idGrid [][]idCell) [][]string {
 
 	squareSize := int(math.Sqrt(float64(len(tiles))))
 	tileSize := len(tiles[0].variants[0]) - 2
@@ -134,7 +207,7 @@ func gridWithoutBorders(tiles []Tile, idGrid, variantGrid [][]string) [][]string
 
 	for y := 0; y < len(idGrid); y++ {
 		for x := 0; x < len(idGrid[y]); x++ {
-			variant := getTileVariant(tiles, util.ToInt(strings.TrimSpace(idGrid[y][x])), util.ToInt(strings.TrimSpace(variantGrid[y][x])))
+			variant := getTileVariant(tiles, idGrid[y][x].ID, idGrid[y][x].variant)
 			variant = tileWithoutBorders(variant)
 			grid = addTileToGrid(variant, y*len(variant), x*len(variant[0]), grid)
 		}
@@ -202,7 +275,6 @@ func findSeaMonster(grid [][]string, seaMonster [][]string) (bool, int) {
 	seaMonsterHashes := 0
 	for y := 0; y+len(seaMonster) < len(grid); y++ {
 		for x := 0; x+len(seaMonster[0]) < len(grid[y]); x++ {
-			//			fmt.Printf("Scanning for Sea Monster from (%v,%v)\n", y, x)
 			if found, hashes := scanArea(grid, y, x, seaMonster); found {
 				seaMonsterHashes += hashes
 			}
@@ -215,13 +287,11 @@ func findSeaMonster(grid [][]string, seaMonster [][]string) (bool, int) {
 }
 
 func scanArea(grid [][]string, ypos, xpos int, seaMonster [][]string) (bool, int) {
-
 	numHash := 0
 	for y := 0; y < len(seaMonster); y++ {
 		for x := 0; x < len(seaMonster[y]); x++ {
 			if seaMonster[y][x] == "#" {
 				if grid[ypos+y][xpos+x] != "#" {
-					//				fmt.Println("Not a sea monster")
 					return false, -1
 				}
 				numHash++
@@ -231,110 +301,8 @@ func scanArea(grid [][]string, ypos, xpos int, seaMonster [][]string) (bool, int
 	return true, numHash
 }
 
-func clearTile(grid [][]string, ypos, xpos int) [][]string {
-	for y := ypos; y < ypos+10; y++ {
-		for x := xpos; x < xpos+10; x++ {
-			grid[y][x] = "x"
-		}
-	}
-	return grid
-}
-
-func getBottomOfAboveTile(grid [][]string, ypos, xpos int) string {
-	bottom := []string{}
-	for x := xpos; x < xpos+10; x++ {
-		bottom = append(bottom, grid[ypos-1][x])
-	}
-	return strings.Join(bottom, "")
-}
-
-func getRightSideOfLeftTile(grid [][]string, ypos, xpos int) string {
-	right := []string{}
-	for y := ypos; y < ypos+10; y++ {
-		right = append(right, grid[y][xpos-1])
-	}
-	return strings.Join(right, "")
-}
-
-func addTileToGrid(tile [][]string, ypos, xpos int, grid [][]string) [][]string {
-	for y := ypos; y < ypos+len(tile); y++ {
-		for x := xpos; x < xpos+len(tile); x++ {
-			grid[y][x] = tile[y-ypos][x-xpos]
-		}
-	}
-	return grid
-}
-
-func addIDToGrid(id string, ypos, xpos int, idGrid [][]string) [][]string {
-	idGrid[ypos/10][xpos/10] = id
-	return idGrid
-}
-
-func addVariantToGrid(id string, ypos, xpos int, variantGrid [][]string) [][]string {
-	variantGrid[ypos/10][xpos/10] = id
-	return variantGrid
-}
-
-func removeTileFromSlice(tile Tile, slice []Tile) []Tile {
-	for i, t := range slice {
-		if t.ID == tile.ID {
-			return append(slice[:i], slice[i+1:]...)
-		}
-	}
-	return slice
-}
-
-func getTiles(input []string) []Tile {
-	tiles := []Tile{}
-	for _, idAndTile := range input {
-		tileID := util.GetIntsAsInts(idAndTile)[0]
-		grid, _ := util.ParseInputByLineAndRune(strings.Join(strings.Split(idAndTile, "\n")[1:], "\n"))
-		variants := getAllGridVariants(grid)
-		borders := make(map[int][]string)
-		for i, v := range variants {
-			borders[i] = util.GetGridBorders(v)
-		}
-		tiles = append(tiles, Tile{ID: tileID, variants: variants, borders: borders})
-	}
-	return tiles
-}
-
-func getAllGridVariants(grid [][]string) map[int][][]string {
-
-	flippedGrids := util.GetGridFlips(grid)
-	rotatedAndFlippedGrids := make([][][]string, 0)
-	for _, mt := range flippedGrids {
-		candidateGrids := util.GetGridRotations(mt)
-		for _, ct := range candidateGrids {
-			if !util.GridInSlice(ct, rotatedAndFlippedGrids) {
-				rotatedAndFlippedGrids = append(rotatedAndFlippedGrids, ct)
-			}
-		}
-	}
-	gridVariants := make(map[int][][]string)
-	for v, grid := range rotatedAndFlippedGrids {
-		gridVariants[v] = grid
-	}
-	return gridVariants
-}
-
-func tileInSlice(tile Tile, slice []Tile) bool {
-	for _, t := range slice {
-		if t.ID == tile.ID {
-			return true
-		}
-	}
-	return false
-}
-
-func part2(input []string) int {
-	return 0
-}
-
 func main() {
 
-	//exampleData, _ := ioutil.ReadFile("2020/day20/example")
-	//rawInput := string(exampleData)
 	rawInput := util.FetchInputForDay("2020", "20")
 	parsedInput := util.ParseInputByBlankLine(rawInput)
 	fmt.Println("Done parsing input.")
@@ -342,7 +310,7 @@ func main() {
 
 	// PART 1
 	s := time.Now()
-	ans1 := part1(parsedInput)
+	ans1, tiles, idGrid := part1(parsedInput)
 	t := time.Now()
 	e := t.Sub(s)
 	fmt.Println("Answer for first question: ", ans1)
@@ -350,7 +318,7 @@ func main() {
 	fmt.Println()
 
 	s = time.Now()
-	ans2 := part2(parsedInput)
+	ans2 := part2(tiles, idGrid)
 	t = time.Now()
 	e = t.Sub(s)
 	fmt.Println("Answer for second question: ", ans2)

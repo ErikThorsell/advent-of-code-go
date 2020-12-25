@@ -211,3 +211,8 @@ func GridInSlice(grid [][]string, slice [][][]string) bool {
 	}
 	return false
 }
+
+// GetCornersOfGrid returns the corners of the grid
+func GetCornersOfGrid(grid [][]string) []string {
+	return []string{grid[0][0], grid[0][len(grid)-1], grid[len(grid)-1][0], grid[len(grid)-1][len(grid)-1]}
+}
