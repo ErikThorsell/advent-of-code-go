@@ -17,12 +17,17 @@ binary.
 ### Tests
 If you want to run the tests, you use: `go test $year/$day/*.go`.
 
+2020
+---
+Solutions to all 2020 Puzzles.
+Some of the solutions are quite nice (like [the Shunting-Yard solution to Day 18](https://github.com/ErikThorsell/advent-of-code-go/blob/main/2020/day18/main.go), and [the Game Boy solution to Day 8](https://github.com/ErikThorsell/advent-of-code-go/blob/main/2020/day08/main.go)).
+Other solutions are absolutely horrible ([golden bags](https://github.com/ErikThorsell/advent-of-code-go/blob/main/2020/day07/main.go) are for instance not a favorite).
+
+
 2019
 ---
 I used some of the 2019 challenges to get familiar with the how Go wants you to
 structure your projects.
 Thereafter I wrote the `./util/` package which I thought could come in handy
 for the 2020 challenges.
-
-2020
----
+*I might get bored during 2021, and return to this repository and solve some of the older puzzles too, so I'll leave this here.*
