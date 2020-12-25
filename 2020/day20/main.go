@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"reflect"
 	"strings"
 	"time"
 
@@ -293,7 +292,7 @@ func getTiles(input []string) []Tile {
 		variants := getAllGridVariants(grid)
 		borders := make(map[int][]string)
 		for i, v := range variants {
-			borders[i] = getGridBorders(v)
+			borders[i] = util.GetGridBorders(v)
 		}
 		tiles = append(tiles, Tile{ID: tileID, variants: variants, borders: borders})
 	}
@@ -302,12 +301,12 @@ func getTiles(input []string) []Tile {
 
 func getAllGridVariants(grid [][]string) map[int][][]string {
 
-	flippedGrids := getGridFlips(grid)
+	flippedGrids := util.GetGridFlips(grid)
 	rotatedAndFlippedGrids := make([][][]string, 0)
 	for _, mt := range flippedGrids {
-		candidateGrids := getGridRotations(mt)
+		candidateGrids := util.GetGridRotations(mt)
 		for _, ct := range candidateGrids {
-			if !gridInSlice(ct, rotatedAndFlippedGrids) {
+			if !util.GridInSlice(ct, rotatedAndFlippedGrids) {
 				rotatedAndFlippedGrids = append(rotatedAndFlippedGrids, ct)
 			}
 		}
@@ -317,103 +316,6 @@ func getAllGridVariants(grid [][]string) map[int][][]string {
 		gridVariants[v] = grid
 	}
 	return gridVariants
-}
-
-func getGridFlips(grid [][]string) [][][]string {
-
-	flips := make([][][]string, 4)
-
-	// The original
-	flips[0] = grid
-
-	// Flip around horizontal axis
-	vGrid := make([][]string, 0)
-	for y := len(grid) - 1; y >= 0; y-- {
-		vGrid = append(vGrid, grid[y])
-	}
-	flips[1] = vGrid
-
-	// Flip around vertical axis
-	vGrid = make([][]string, 0)
-	for y := 0; y < len(grid); y++ {
-		vGrid = append(vGrid, make([]string, 0))
-		for x := len(grid[y]) - 1; x >= 0; x-- {
-			vGrid[y] = append(vGrid[y], grid[y][x])
-		}
-	}
-	flips[2] = vGrid
-
-	// Flip around vertical then horizontal axis
-	vGrid = make([][]string, 0)
-	for y := 0; y < len(flips[1]); y++ {
-		vGrid = append(vGrid, make([]string, 0))
-		for x := len(flips[1]) - 1; x >= 0; x-- {
-			vGrid[y] = append(vGrid[y], flips[1][y][x])
-		}
-	}
-	flips[3] = vGrid
-
-	return flips
-
-}
-
-func getGridRotations(grid [][]string) [][][]string {
-
-	rotations := make([][][]string, 4)
-
-	// Original
-	rotations[0] = util.CopyGrid(grid)
-
-	// Take the previous grid and rotate it 90 degrees
-	for i := 1; i <= 3; i++ {
-		grid := util.CopyGrid(rotations[i-1])
-		for x := range grid {
-			for y := range grid[x] {
-				grid[x][y] = rotations[i-1][len(grid[x])-y-1][x]
-			}
-		}
-		rotations[i] = grid
-	}
-	return rotations
-}
-
-func transposeGrid(grid [][]string) [][]string {
-	tg := make([][]string, 0)
-	for y := 0; y < len(grid); y++ {
-		tg = append(grid, make([]string, 0))
-		for x := len(grid[y]) - 1; x >= 0; x-- {
-			tg[y][x] = grid[x][y]
-		}
-	}
-	return tg
-}
-
-func gridInSlice(grid [][]string, slice [][][]string) bool {
-	for _, t := range slice {
-		if reflect.DeepEqual(t, grid) {
-			return true
-		}
-	}
-	return false
-}
-
-func getGridBorders(grid [][]string) []string {
-
-	top := strings.Join(grid[0], "")
-
-	right := ""
-	for y := 0; y < len(grid); y++ {
-		right += grid[y][len(grid)-1]
-	}
-
-	bottom := strings.Join(grid[len(grid)-1], "")
-
-	left := ""
-	for y := 0; y < len(grid); y++ {
-		left += grid[y][0]
-	}
-
-	return []string{top, right, bottom, left}
 }
 
 func tileInSlice(tile Tile, slice []Tile) bool {
