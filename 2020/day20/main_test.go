@@ -22,7 +22,8 @@ func Test0(t *testing.T) {
 
 func Test1(t *testing.T) {
 
-	exampleData, _ := ioutil.ReadFile("./example")
+	exampleData, _ := ioutil.ReadFile("../data/20")
+	//exampleData, _ := ioutil.ReadFile("./example")
 	exampleResult := 0
 
 	parsedExampleData := util.ParseInputByBlankLine(string(exampleData))

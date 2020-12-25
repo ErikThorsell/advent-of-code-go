@@ -131,7 +131,7 @@ func ParseInputByLineAndRune(input string) ([][]string, int) {
 // ParseInputByBlankLine returns a list of strings where each item
 // was originally separated by a blank line.
 func ParseInputByBlankLine(input string) []string {
-	return strings.Split(input, "\r\n\r\n")
+	return strings.Split(input, "\n\n")
 }
 
 // ParseNumberDashNumber takes: "number1-number2" and returns the numbers as ints

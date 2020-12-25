@@ -90,13 +90,13 @@ func CheckLineOfSight(grid [][]string, i, j int, charOfInterest string) int {
 // PrintGrid prints a grid
 func PrintGrid(grid [][]string) {
 	for i := 0; i < len(grid); i++ {
-		if i >= 10 && RealMod(i, 10) == 0 {
-			fmt.Print("\n")
-		}
+		//		if i >= 10 && RealMod(i, 10) == 0 {
+		//			fmt.Print("\n")
+		//		}
 		for j := 0; j < len(grid[i]); j++ {
-			if j >= 10 && RealMod(j, 10) == 0 {
-				fmt.Print(" ")
-			}
+			//			if j >= 10 && RealMod(j, 10) == 0 {
+			//				fmt.Print(" ")
+			//			}
 			fmt.Print(grid[i][j])
 		}
 		fmt.Println()
